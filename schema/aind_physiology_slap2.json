@@ -35,13 +35,18 @@
           "$ref": "#/$defs/HarpCuttlefishfip",
           "description": "CuttlefishFip board for controlling the trigger of cameras and light-sources",
           "title": "CuttlefishFip"
+        },
+        "digital_input_pin": {
+          "$ref": "#/$defs/Ports",
+          "description": "Cuttlefish port whose digital input is monitored."
         }
       },
       "required": [
         "computer_name",
         "rig_name",
         "data_directory",
-        "cuttlefish_fip"
+        "cuttlefish_fip",
+        "digital_input_pin"
       ],
       "title": "AindPhysioSlap2Rig",
       "type": "object"
@@ -101,6 +106,33 @@
       ],
       "title": "HarpCuttlefishfip",
       "type": "object"
+    },
+    "Ports": {
+      "description": "Available hardware ports in the cuttlefish board.",
+      "enum": [
+        0,
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128
+      ],
+      "title": "Ports",
+      "type": "integer",
+      "x-enumNames": [
+        "None",
+        "Io0",
+        "Io1",
+        "Io2",
+        "Io3",
+        "Io4",
+        "Io5",
+        "Io6",
+        "Io7"
+      ]
     },
     "Session": {
       "properties": {

@@ -31,6 +31,8 @@ namespace AindPhysiologySlap2
     
         private HarpCuttlefishfip _cuttlefishFip;
     
+        private Ports _digitalInputPin;
+    
         public AindPhysioSlap2Rig()
         {
             _aindBehaviorServicesPkgVersion = "0.13.9";
@@ -46,6 +48,7 @@ namespace AindPhysiologySlap2
             _rigName = other._rigName;
             _dataDirectory = other._dataDirectory;
             _cuttlefishFip = other._cuttlefishFip;
+            _digitalInputPin = other._digitalInputPin;
         }
     
         [Newtonsoft.Json.JsonPropertyAttribute("aind_behavior_services_pkg_version")]
@@ -143,6 +146,23 @@ namespace AindPhysiologySlap2
             }
         }
     
+        /// <summary>
+        /// Cuttlefish port whose digital input is monitored.
+        /// </summary>
+        [Newtonsoft.Json.JsonPropertyAttribute("digital_input_pin", Required=Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DescriptionAttribute("Cuttlefish port whose digital input is monitored.")]
+        public Ports DigitalInputPin
+        {
+            get
+            {
+                return _digitalInputPin;
+            }
+            set
+            {
+                _digitalInputPin = value;
+            }
+        }
+    
         public System.IObservable<AindPhysioSlap2Rig> Generate()
         {
             return System.Reactive.Linq.Observable.Defer(() => System.Reactive.Linq.Observable.Return(new AindPhysioSlap2Rig(this)));
@@ -160,7 +180,8 @@ namespace AindPhysiologySlap2
             stringBuilder.Append("ComputerName = " + _computerName + ", ");
             stringBuilder.Append("RigName = " + _rigName + ", ");
             stringBuilder.Append("DataDirectory = " + _dataDirectory + ", ");
-            stringBuilder.Append("CuttlefishFip = " + _cuttlefishFip);
+            stringBuilder.Append("CuttlefishFip = " + _cuttlefishFip + ", ");
+            stringBuilder.Append("DigitalInputPin = " + _digitalInputPin);
             return true;
         }
     
@@ -364,6 +385,42 @@ namespace AindPhysiologySlap2
             stringBuilder.Append("}");
             return stringBuilder.ToString();
         }
+    }
+
+
+    /// <summary>
+    /// Available hardware ports in the cuttlefish board.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Bonsai.Sgen", "0.9.0.0 (Newtonsoft.Json v13.0.0.0)")]
+    public enum Ports
+    {
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="0")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="1")]
+        Io0 = 1,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="2")]
+        Io1 = 2,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="4")]
+        Io2 = 4,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="8")]
+        Io3 = 8,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="16")]
+        Io4 = 16,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="32")]
+        Io5 = 32,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="64")]
+        Io6 = 64,
+    
+        [System.Runtime.Serialization.EnumMemberAttribute(Value="128")]
+        Io7 = 128,
     }
 
 

@@ -1,0 +1,15 @@
+{
+  "aind_behavior_services_pkg_version": "0.13.9",
+  "version": "0.1.0",
+  "computer_name": "test_computer",
+  "rig_name": "test_rig",
+  "data_directory": "C:\\data",
+  "cuttlefish_fip": {
+    "device_type": "cuTTLefishFip",
+    "calibration": null,
+    "who_am_i": 1407,
+    "serial_number": null,
+    "port_name": "COM4"
+  },
+  "digital_input_pin": 1
+}
