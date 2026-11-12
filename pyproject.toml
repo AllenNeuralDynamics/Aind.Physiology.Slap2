@@ -1,0 +1,29 @@
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
+testpaths = ["tests"]
+
+[tool.uv.workspace]
+members = ["src/packages/aind_physiology_slap2"]
+
+[tool.uv.sources]
+aind-physiology-slap2 = { workspace = true }
+
+[dependency-groups]
+dev = ["pytest", "ruff", "codespell", "aind-physiology-slap2"]
+
+[tool.uv]
+default-groups = ["dev"]
+required-version = ">=0.8.4"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+extend-select = ["Q", "RUF100", "C90", "I"]
+mccabe = { max-complexity = 14 }
+pydocstyle = { convention = "google" }
+
+[tool.codespell]
+skip = ".git,*.pdf,*.svg,./.bonsai,*.bonsai,*.Generated.cs,./site,uv.lock"
+ignore-words-list = "nd"

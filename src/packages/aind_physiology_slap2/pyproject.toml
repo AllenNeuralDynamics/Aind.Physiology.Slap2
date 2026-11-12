@@ -1,0 +1,20 @@
+[build-system]
+requires = ["uv_build>=0.8.22"]
+build-backend = "uv_build"
+
+[project]
+name = "aind-physiology-slap2"
+description = "A repository for SLAP2 physiology data acquisition"
+authors = [{ name = "Bruno Cruz", email = "bruno.cruz@alleninstitute.org" }]
+license = "MIT"
+requires-python = ">=3.11"
+version = "0.1.0"
+readme = { file = "README.md", content-type = "text/markdown" }
+classifiers = ["Programming Language :: Python :: 3.11", "License :: OSI Approved :: MIT License", "Operating System :: Microsoft :: Windows"]
+dependencies = ["aind_behavior_services>=0.13.6", "pydantic-settings"]
+
+[project.urls]
+Repository = "https://github.com/AllenNeuralDynamics/Aind.Physiology.Slap2/"
+
+[project.scripts]
+slap2 = "aind_physiology_slap2.cli:main"

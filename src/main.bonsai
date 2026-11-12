@@ -5,9 +5,11 @@
                  xmlns:harp="clr-namespace:Bonsai.Harp;assembly=Bonsai.Harp"
                  xmlns:p1="clr-namespace:AllenNeuralDynamics.Cuttlefish;assembly=AllenNeuralDynamics.Cuttlefish"
                  xmlns:imvizui="clr-namespace:Bonsai.ImGui.Visualizers;assembly=Bonsai.ImGui.Visualizers.Design"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:p2="clr-namespace:;assembly=Extensions"
                  xmlns:gui="clr-namespace:Bonsai.Gui;assembly=Bonsai.Gui"
                  xmlns:ui="clr-namespace:Bonsai.Design;assembly=Bonsai.Design"
-                 xmlns:p2="clr-namespace:;assembly=Extensions"
+                 xmlns:p3="clr-namespace:AindPhysiologySlap2;assembly=Extensions"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -155,74 +157,80 @@
       <Expression xsi:type="rx:PublishSubject">
         <Name>DigitalState</Name>
       </Expression>
+      <Expression xsi:type="imvizui:ImGuiVisualizerBuilder" />
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>FormFrame</Name>
+      </Expression>
+      <Expression xsi:type="VisualizerMapping" />
+      <Expression xsi:type="imvizui:ImPlotVisualizerBuilder" />
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>PlotFrame</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>FormFrame</Name>
+      </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="IntProperty">
-          <Value>0</Value>
+        <Combinator xsi:type="p2:SessionFormVisualizer">
+          <p2:Visible>true</p2:Visible>
+          <p2:FontSize>24</p2:FontSize>
+          <p2:AllowDirtyRepo>false</p2:AllowDirtyRepo>
+          <p2:SkipHardwareValidation>false</p2:SkipHardwareValidation>
         </Combinator>
       </Expression>
-      <Expression xsi:type="rx:Visualizer">
-        <Workflow>
-          <Nodes>
-            <Expression xsi:type="rx:Defer">
-              <Name>DigitalStatePlot</Name>
-              <Workflow>
-                <Nodes>
-                  <Expression xsi:type="imvizui:ImPlotVisualizerBuilder" />
-                  <Expression xsi:type="rx:PublishSubject">
-                    <Name>frame</Name>
-                  </Expression>
-                  <Expression xsi:type="WorkflowOutput" />
-                  <Expression xsi:type="SubscribeSubject">
-                    <Name>frame</Name>
-                  </Expression>
-                  <Expression xsi:type="SubscribeSubject">
-                    <Name>DigitalState</Name>
-                  </Expression>
-                  <Expression xsi:type="Combinator">
-                    <Combinator xsi:type="p2:DigitalStateVisualizer">
-                      <p2:Visible>true</p2:Visible>
-                      <p2:FontSize>20</p2:FontSize>
-                      <p2:WindowSeconds>10</p2:WindowSeconds>
-                    </Combinator>
-                  </Expression>
-                </Nodes>
-                <Edges>
-                  <Edge From="0" To="1" Label="Source1" />
-                  <Edge From="1" To="2" Label="Source1" />
-                  <Edge From="3" To="5" Label="Source1" />
-                  <Edge From="4" To="5" Label="Source2" />
-                </Edges>
-              </Workflow>
-            </Expression>
-            <Expression xsi:type="VisualizerMapping" />
-            <Expression xsi:type="gui:TableLayoutPanelBuilder">
-              <gui:Name>DigitalStateGUI</gui:Name>
-              <gui:Enabled>true</gui:Enabled>
-              <gui:Visible>true</gui:Visible>
-              <gui:ColumnCount>1</gui:ColumnCount>
-              <gui:RowCount>1</gui:RowCount>
-              <gui:ColumnStyles />
-              <gui:RowStyles />
-              <gui:CellSpans />
-            </Expression>
-            <Expression xsi:type="WorkflowOutput" />
-          </Nodes>
-          <Edges>
-            <Edge From="0" To="1" Label="Source1" />
-            <Edge From="1" To="2" Label="Source1" />
-            <Edge From="2" To="3" Label="Source1" />
-          </Edges>
-        </Workflow>
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>Session</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>PlotFrame</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>DigitalState</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p2:DigitalStateVisualizer">
+          <p2:Visible>true</p2:Visible>
+          <p2:FontSize>24</p2:FontSize>
+          <p2:WindowSeconds>10</p2:WindowSeconds>
+          <p2:HeightFraction>0.4</p2:HeightFraction>
+        </Combinator>
       </Expression>
       <Expression xsi:type="ui:VisualizerWindow">
-        <ui:Text>DigitalStateVisualizer</ui:Text>
+        <ui:Text>SlapVisualizer</ui:Text>
         <ui:Visible>true</ui:Visible>
         <ui:Location xsi:nil="true" />
         <ui:Size>
-          <ui:Width>800</ui:Width>
-          <ui:Height>300</ui:Height>
+          <ui:Width>900</ui:Width>
+          <ui:Height>820</ui:Height>
         </ui:Size>
         <ui:Mappings />
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>FormFrame</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p2:ToggleButtonVisualizer">
+          <p2:Visible>true</p2:Visible>
+          <p2:Enabled>true</p2:Enabled>
+          <p2:Value>false</p2:Value>
+          <p2:TextOff>Start</p2:TextOff>
+          <p2:TextOn>Stop</p2:TextOn>
+          <p2:FontSize>24</p2:FontSize>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="MulticastSubject">
+        <Name>SessionRunning</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>SessionRunning</Name>
+      </Expression>
+      <Expression xsi:type="BitwiseNot" />
+      <Expression xsi:type="PropertyMapping">
+        <PropertyMappings>
+          <Property Name="Enabled" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject" TypeArguments="sys:Boolean">
+        <rx:Name>SessionRunning</rx:Name>
       </Expression>
     </Nodes>
     <Edges>
@@ -256,6 +264,18 @@
       <Edge From="26" To="27" Label="Source1" />
       <Edge From="28" To="29" Label="Source1" />
       <Edge From="29" To="30" Label="Source1" />
+      <Edge From="30" To="31" Label="Source1" />
+      <Edge From="31" To="32" Label="Source1" />
+      <Edge From="33" To="34" Label="Source1" />
+      <Edge From="34" To="35" Label="Source1" />
+      <Edge From="36" To="38" Label="Source1" />
+      <Edge From="37" To="38" Label="Source2" />
+      <Edge From="32" To="39" Label="Source1" />
+      <Edge From="40" To="41" Label="Source1" />
+      <Edge From="41" To="42" Label="Source1" />
+      <Edge From="43" To="44" Label="Source1" />
+      <Edge From="44" To="45" Label="Source1" />
+      <Edge From="45" To="34" Label="Source2" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
