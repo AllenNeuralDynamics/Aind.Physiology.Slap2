@@ -5,6 +5,8 @@ import pydantic
 from aind_behavior_services.schema import BonsaiSgenSerializers, convert_pydantic_to_bonsai
 from aind_behavior_services.session import Session
 
+from aind_physiology_slap2 import rig
+
 SCHEMA_ROOT = Path("./schema/")
 EXTENSIONS_ROOT = Path("./src/Extensions/")
 NAMESPACE_PREFIX = "AindPhysiologySlap2"
@@ -13,6 +15,7 @@ NAMESPACE_PREFIX = "AindPhysiologySlap2"
 def main():
     """Regenerate the JSON schema and the Bonsai C# classes from the pydantic models."""
     models = [
+        rig.AindPhysioSlap2Rig,
         Session,
     ]
 

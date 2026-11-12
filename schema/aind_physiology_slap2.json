@@ -1,5 +1,107 @@
 {
   "$defs": {
+    "AindPhysioSlap2Rig": {
+      "description": "Rig configuration model for the AIND SLAP2 physiology system.",
+      "properties": {
+        "aind_behavior_services_pkg_version": {
+          "default": "0.13.9",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+          "title": "aind_behavior_services package version",
+          "type": "string"
+        },
+        "version": {
+          "const": "0.1.0",
+          "default": "0.1.0",
+          "title": "Version",
+          "type": "string"
+        },
+        "computer_name": {
+          "description": "Computer name",
+          "title": "Computer Name",
+          "type": "string"
+        },
+        "rig_name": {
+          "description": "Rig name",
+          "title": "Rig Name",
+          "type": "string"
+        },
+        "data_directory": {
+          "description": "Directory where data will be saved to",
+          "format": "path",
+          "title": "Data Directory",
+          "type": "string"
+        },
+        "cuttlefish_fip": {
+          "$ref": "#/$defs/HarpCuttlefishfip",
+          "description": "CuttlefishFip board for controlling the trigger of cameras and light-sources",
+          "title": "CuttlefishFip"
+        }
+      },
+      "required": [
+        "computer_name",
+        "rig_name",
+        "data_directory",
+        "cuttlefish_fip"
+      ],
+      "title": "AindPhysioSlap2Rig",
+      "type": "object"
+    },
+    "BaseModel": {
+      "properties": {},
+      "title": "BaseModel",
+      "type": "object"
+    },
+    "HarpCuttlefishfip": {
+      "properties": {
+        "device_type": {
+          "const": "cuTTLefishFip",
+          "default": "cuTTLefishFip",
+          "title": "Device Type",
+          "type": "string"
+        },
+        "calibration": {
+          "default": null,
+          "description": "Calibration for the device.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/BaseModel"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "who_am_i": {
+          "const": 1407,
+          "default": 1407,
+          "title": "Who Am I",
+          "type": "integer"
+        },
+        "serial_number": {
+          "default": null,
+          "description": "Device serial number",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Serial Number"
+        },
+        "port_name": {
+          "description": "Device port name",
+          "title": "Port Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "port_name"
+      ],
+      "title": "HarpCuttlefishfip",
+      "type": "object"
+    },
     "Session": {
       "properties": {
         "aind_behavior_services_pkg_version": {
@@ -105,8 +207,5 @@
       "title": "Session",
       "type": "object"
     }
-  },
-  "items": {
-    "$ref": "#/$defs/Session"
   }
 }
