@@ -17,9 +17,25 @@ static class UiFont
 
     static ImFontPtr font;
     static bool loaded;
+    static IntPtr lastIo;
+    static int lastFrame;
 
     public static unsafe ImFontPtr Get()
     {
+        // The cached font belongs to the ImGui context it was loaded into. When the workflow is
+        // restarted a new context (and font atlas) is created and the old font pointer dangles, so
+        // drop the cache whenever the context changed: a different ImGuiIO address, or a frame
+        // counter that went backwards (a fresh context starts counting again).
+        var io = (IntPtr)ImGui.GetIO().Handle;
+        var frame = ImGui.GetFrameCount();
+        if (loaded && (io != lastIo || frame < lastFrame))
+        {
+            loaded = false;
+            font = default(ImFontPtr);
+        }
+        lastIo = io;
+        lastFrame = frame;
+
         if (!loaded)
         {
             loaded = true;

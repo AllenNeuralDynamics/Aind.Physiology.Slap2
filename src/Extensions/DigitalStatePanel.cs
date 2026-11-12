@@ -30,11 +30,18 @@ class DigitalStatePanel
     readonly List<Transition> transitions = new List<Transition>();
     readonly object gate = new object();
     double latest;
+    bool? synchronized;
     bool paused;
     double pausedAt;
 
     /// <summary>Width of the rolling window, in seconds. Can be changed from the toolbar.</summary>
     public double WindowSeconds = 10;
+
+    /// <summary>Latest synchronization state of the board (unknown until the first value arrives).</summary>
+    public void SetSynchronized(bool value)
+    {
+        synchronized = value;
+    }
 
     public void AddSample(Bonsai.Harp.Timestamped<bool> sample)
     {
@@ -144,34 +151,53 @@ class DigitalStatePanel
         UiTheme.PopPlot();
 
         ImGui.SameLine();
-        DrawIndicator(snapshot.Length > 0 && snapshot[snapshot.Length - 1].Value, indicatorWidth);
+        DrawIndicators(snapshot.Length > 0 && snapshot[snapshot.Length - 1].Value, synchronized, indicatorWidth);
     }
 
-    // Current-state indicator, centered in the free space (horizontally and vertically): a filled
-    // circle with a soft halo (green = HIGH, gray = LOW) and the state label underneath.
-    static void DrawIndicator(bool high, float width)
+    // Side column with two stacked state indicators: the digital input (blue = HIGH, slate = LOW)
+    // on top and the board synchronization (blue = synchronized, red = not synchronized, slate =
+    // unknown) below it. Each is a filled circle with a caption above and the state underneath.
+    static void DrawIndicators(bool high, bool? synchronized, float width)
     {
         ImGui.BeginChild("##DigitalStateIndicator", new Vector2(width, -1));
         var avail = ImGui.GetContentRegionAvail();
-        var label = high ? "HIGH" : "LOW";
-        var labelSize = ImGui.CalcTextSize(label);
-        var gap = 12f;
-        var radius = Math.Max(6f, Math.Min(avail.X * 0.5f - 8f, (avail.Y - labelSize.Y - gap) * 0.5f - 6f));
-        var blockHeight = radius * 2f + gap + labelSize.Y;
-
         var origin = ImGui.GetCursorScreenPos();
-        var center = new Vector2(origin.X + avail.X / 2f, origin.Y + (avail.Y - blockHeight) / 2f + radius);
-        var color = high ? HighColor : LowColor;
+        var half = avail.Y / 2f;
+
+        DrawIndicator(origin, new Vector2(avail.X, half), "DIGITAL IN", high ? "HIGH" : "LOW", high ? HighColor : LowColor, high);
+
+        string syncLabel = synchronized.HasValue ? (synchronized.Value ? "SYNCED" : "NOT SYNCED") : "UNKNOWN";
+        var syncColor = synchronized.HasValue ? (synchronized.Value ? UiTheme.Blue : UiTheme.Red) : UiTheme.Slate;
+        DrawIndicator(new Vector2(origin.X, origin.Y + half), new Vector2(avail.X, half), "SYNC", syncLabel, syncColor, synchronized.HasValue);
+        ImGui.EndChild();
+    }
+
+    // Draws one indicator centered in the given screen-space cell: caption, circle (with a soft
+    // halo when active), then the state label.
+    static void DrawIndicator(Vector2 cellOrigin, Vector2 cellSize, string caption, string label, Vector4 color, bool halo)
+    {
+        var captionSize = ImGui.CalcTextSize(caption);
+        var labelSize = ImGui.CalcTextSize(label);
+        var gap = 8f;
+        var radius = Math.Max(6f, Math.Min(cellSize.X * 0.5f - 10f, (cellSize.Y - captionSize.Y - labelSize.Y - gap * 2f) * 0.5f - 6f));
+        var blockHeight = captionSize.Y + gap + radius * 2f + gap + labelSize.Y;
+
+        var top = cellOrigin.Y + Math.Max(0f, (cellSize.Y - blockHeight) / 2f);
+        var centerX = cellOrigin.X + cellSize.X / 2f;
+        var center = new Vector2(centerX, top + captionSize.Y + gap + radius);
         var drawList = ImGui.GetWindowDrawList();
-        if (high)
+
+        ImGui.SetCursorScreenPos(new Vector2(centerX - captionSize.X / 2f, top));
+        ImGui.TextColored(UiTheme.TextDim, caption);
+
+        if (halo)
         {
             drawList.AddCircleFilled(center, radius + 5f, ImGui.ColorConvertFloat4ToU32(new Vector4(color.X, color.Y, color.Z, 0.25f)), 64);
         }
         drawList.AddCircleFilled(center, radius, ImGui.ColorConvertFloat4ToU32(color), 64);
         drawList.AddCircle(center, radius, ImGui.ColorConvertFloat4ToU32(new Vector4(1f, 1f, 1f, 0.25f)), 64, 2f);
 
-        ImGui.SetCursorScreenPos(new Vector2(center.X - labelSize.X / 2f, center.Y + radius + gap));
+        ImGui.SetCursorScreenPos(new Vector2(centerX - labelSize.X / 2f, center.Y + radius + gap));
         ImGui.TextColored(color, label);
-        ImGui.EndChild();
     }
 }

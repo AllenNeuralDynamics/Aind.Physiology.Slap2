@@ -9,11 +9,11 @@ using Hexa.NET.ImGui;
 /// <summary>
 /// Renders a Timestamped&lt;bool&gt; stream as a rolling step plot (high/low) whose x axis is the
 /// Harp timestamp, with a small indicator on the right showing the current state.
-/// Source1 = Frame subject (ImPlot visualizer ticks); Source2 = the Timestamped&lt;bool&gt; stream.
+/// Source1 = Frame subject (ImPlot visualizer ticks); Source2 = the Timestamped&lt;bool&gt; stream; Source3 = the board IsSynchronized stream (bool, or a numeric value where non-zero means synchronized).
 /// </summary>
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Combinator)]
-[Description("Renders a Timestamped<bool> stream as a rolling high/low step plot (x axis = Harp timestamp, in seconds) with a current-state indicator. Source1 = Frame subject; Source2 = IObservable<Timestamped<bool>>.")]
+[Description("Renders a Timestamped<bool> stream as a rolling high/low step plot (x axis = Harp timestamp, in seconds) with a current-state indicator. Source1 = Frame subject; Source2 = IObservable<Timestamped<bool>>; Source3 = the IsSynchronized stream (bool, or a numeric value where non-zero means synchronized).")]
 public class DigitalStateVisualizer
 {
     private bool visible = true;
@@ -32,7 +32,7 @@ public class DigitalStateVisualizer
     [Description("Fraction of the canvas height used by the plot, so that visualizers composed below it (e.g. the session form) have room. Use 0 to fill the whole canvas.")]
     public float HeightFraction { get { return heightFraction; } set { heightFraction = value; } }
 
-    public IObservable<Unit> Process<TTickSource>(IObservable<TTickSource> frames, IObservable<Bonsai.Harp.Timestamped<bool>> samples)
+    public IObservable<Unit> Process<TTickSource, TSynchronized>(IObservable<TTickSource> frames, IObservable<Bonsai.Harp.Timestamped<bool>> samples, IObservable<TSynchronized> isSynchronized)
     {
         return Observable.Create<Unit>(observer =>
         {
@@ -41,6 +41,11 @@ public class DigitalStateVisualizer
 
             var samplesSub = samples.SubscribeSafe(Observer.Create<Bonsai.Harp.Timestamped<bool>>(
                 panel.AddSample,
+                observer.OnError));
+
+            var syncSub = isSynchronized.SubscribeSafe(Observer.Create<TSynchronized>(
+                // Any value type works (bool, or a ushort/int register bit): non-zero means synchronized.
+                value => panel.SetSynchronized(Convert.ToBoolean((object)value, System.Globalization.CultureInfo.InvariantCulture)),
                 observer.OnError));
 
             var frameSub = frames.SubscribeSafe(Observer.Create<TTickSource>(
@@ -77,7 +82,7 @@ public class DigitalStateVisualizer
                 observer.OnError,
                 observer.OnCompleted));
 
-            return new CompositeDisposable(samplesSub, frameSub);
+            return new CompositeDisposable(samplesSub, syncSub, frameSub);
         });
     }
 }
