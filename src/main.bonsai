@@ -2,8 +2,8 @@
 <WorkflowBuilder Version="2.9.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
-                 xmlns:p1="clr-namespace:AllenNeuralDynamics.Cuttlefish;assembly=AllenNeuralDynamics.Cuttlefish"
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:p1="clr-namespace:AllenNeuralDynamics.Cuttlefish;assembly=AllenNeuralDynamics.Cuttlefish"
                  xmlns:harp="clr-namespace:Bonsai.Harp;assembly=Bonsai.Harp"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
@@ -36,18 +36,6 @@
       <Expression xsi:type="rx:AsyncSubject">
         <Name>ComPort</Name>
       </Expression>
-      <Expression xsi:type="PropertySource" TypeArguments="p1:CreateEnableRisingEdgeEventsPayload,p1:Pins">
-        <MemberName>EnableRisingEdgeEvents</MemberName>
-        <Value>Pin0</Value>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="rx:Take">
-          <rx:Count>1</rx:Count>
-        </Combinator>
-      </Expression>
-      <Expression xsi:type="rx:AsyncSubject">
-        <Name>DIPin</Name>
-      </Expression>
       <Expression xsi:type="GroupWorkflow">
         <Name>Init</Name>
         <Workflow>
@@ -56,9 +44,23 @@
               <rx:Name>SessionRunning</rx:Name>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />
+            <Expression xsi:type="PropertySource" TypeArguments="p1:CreateEnableRisingEdgeEventsPayload,p1:Pins">
+              <MemberName>EnableRisingEdgeEvents</MemberName>
+              <Value>Pin0</Value>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Take">
+                <rx:Count>1</rx:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:AsyncSubject">
+              <Name>DIPin</Name>
+            </Expression>
           </Nodes>
           <Edges>
             <Edge From="0" To="1" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
           </Edges>
         </Workflow>
       </Expression>
@@ -68,6 +70,14 @@
           <Nodes>
             <Expression xsi:type="rx:BehaviorSubject" TypeArguments="harp:HarpMessage">
               <rx:Name>CuttlefishCommands</rx:Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ComPort</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="PortName" />
+              </PropertyMappings>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:Device">
@@ -110,18 +120,10 @@
                 <rx:Count>1</rx:Count>
               </Combinator>
             </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>DIPin</Name>
-            </Expression>
-            <Expression xsi:type="PropertyMapping">
-              <PropertyMappings>
-                <Property Name="EnableRisingEdgeEvents" />
-              </PropertyMappings>
-            </Expression>
             <Expression xsi:type="p1:CreateMessage">
               <harp:MessageType>Write</harp:MessageType>
               <harp:Payload xsi:type="p1:CreateEnableRisingEdgeEventsPayload">
-                <p1:EnableRisingEdgeEvents>None</p1:EnableRisingEdgeEvents>
+                <p1:EnableRisingEdgeEvents>Pin0 Pin1 Pin2 Pin3 Pin4 Pin5 Pin6 Pin7</p1:EnableRisingEdgeEvents>
               </harp:Payload>
             </Expression>
             <Expression xsi:type="MulticastSubject">
@@ -148,13 +150,13 @@
             </Expression>
           </Nodes>
           <Edges>
-            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="0" To="3" Label="Source1" />
             <Edge From="1" To="2" Label="Source1" />
-            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="3" To="4" Label="Source1" />
             <Edge From="4" To="5" Label="Source1" />
-            <Edge From="5" To="8" Label="Source1" />
             <Edge From="6" To="7" Label="Source1" />
-            <Edge From="7" To="8" Label="Source2" />
+            <Edge From="7" To="8" Label="Source1" />
             <Edge From="8" To="9" Label="Source1" />
             <Edge From="9" To="10" Label="Source1" />
             <Edge From="10" To="12" Label="Source1" />
@@ -265,8 +267,6 @@
       <Edge From="4" To="5" Label="Source1" />
       <Edge From="5" To="6" Label="Source1" />
       <Edge From="6" To="7" Label="Source1" />
-      <Edge From="8" To="9" Label="Source1" />
-      <Edge From="9" To="10" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

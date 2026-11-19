@@ -54,6 +54,17 @@
         <io:Suffix>None</io:Suffix>
         <io:IncludeHeader>true</io:IncludeHeader>
       </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>LoggingRootPath</Name>
+      </Expression>
+      <Expression xsi:type="Format">
+        <Format>{0}/sync.csv</Format>
+      </Expression>
+      <Expression xsi:type="PropertyMapping">
+        <PropertyMappings>
+          <Property Name="FileName" />
+        </PropertyMappings>
+      </Expression>
     </Nodes>
     <Edges>
       <Edge From="0" To="3" Label="Source1" />
@@ -65,6 +76,9 @@
       <Edge From="8" To="9" Label="Source1" />
       <Edge From="9" To="10" Label="Source1" />
       <Edge From="10" To="11" Label="Source1" />
+      <Edge From="12" To="13" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="14" To="11" Label="Source2" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
