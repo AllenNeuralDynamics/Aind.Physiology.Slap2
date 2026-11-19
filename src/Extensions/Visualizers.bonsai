@@ -62,9 +62,14 @@
       <Expression xsi:type="imgui:TableNextColumnBuilder">
         <imgui:Visible>true</imgui:Visible>
       </Expression>
-      <Expression xsi:type="imgui:ButtonBuilder">
-        <imgui:Visible>true</imgui:Visible>
-        <imgui:Text>Stop</imgui:Text>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:StopButtonVisualizer">
+          <p1:Visible>true</p1:Visible>
+          <p1:Text>STOP</p1:Text>
+          <p1:TextStopping>STOPPING...</p1:TextStopping>
+          <p1:Tooltip>End the session and close the log files</p1:Tooltip>
+          <p1:FontSize>24</p1:FontSize>
+        </Combinator>
       </Expression>
       <Expression xsi:type="rx:PublishSubject">
         <Name>StopRequested</Name>
