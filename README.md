@@ -22,7 +22,7 @@ Run the workflow straight from the command line and pass the properties with `-p
     -p:OutputPath="C:\data\my_session"
 ```
 
-`--no-editor` starts the workflow right away without opening the editor. The `SlapVisualizer` window still opens, because it is part of the workflow. Close it or press `Ctrl+C` in the terminal to stop.
+`--no-editor` starts the workflow right away without opening the editor. The `SlapVisualizer` window still opens, because it is part of the workflow.
 
 ### Properties
 

@@ -4,12 +4,40 @@
                  xmlns:p1="clr-namespace:;assembly=Extensions"
                  xmlns:imvizui="clr-namespace:Bonsai.ImGui.Visualizers;assembly=Bonsai.ImGui.Visualizers.Design"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:imgui="clr-namespace:Bonsai.ImGui;assembly=Bonsai.ImGui"
                  xmlns:ui="clr-namespace:Bonsai.Design;assembly=Bonsai.Design"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
+      <Expression xsi:type="imvizui:ImPlotVisualizerBuilder" />
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>Frame</Name>
+      </Expression>
+      <Expression xsi:type="ui:VisualizerWindow">
+        <ui:Text>SlapVisualizer</ui:Text>
+        <ui:Visible>true</ui:Visible>
+        <ui:Location xsi:nil="true" />
+        <ui:Size>
+          <ui:Width>900</ui:Width>
+          <ui:Height>820</ui:Height>
+        </ui:Size>
+        <ui:WindowState xsi:nil="true" />
+      </Expression>
       <Expression xsi:type="SubscribeSubject">
-        <Name>PlotFrame</Name>
+        <Name>Frame</Name>
+      </Expression>
+      <Expression xsi:type="imgui:TableBuilder">
+        <imgui:Visible>true</imgui:Visible>
+        <imgui:Columns>1</imgui:Columns>
+        <imgui:Flags>None</imgui:Flags>
+        <imgui:OuterSize>
+          <imgui:X>0</imgui:X>
+          <imgui:Y>0</imgui:Y>
+        </imgui:OuterSize>
+        <imgui:InnerWidth>0</imgui:InnerWidth>
+      </Expression>
+      <Expression xsi:type="imgui:TableNextColumnBuilder">
+        <imgui:Visible>true</imgui:Visible>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
         <Name>RisingEdgeEvents</Name>
@@ -28,40 +56,33 @@
           <p1:Visible>true</p1:Visible>
           <p1:FontSize>24</p1:FontSize>
           <p1:WindowSeconds>10</p1:WindowSeconds>
-          <p1:HeightFraction>0.4</p1:HeightFraction>
+          <p1:HeightFraction>0.85</p1:HeightFraction>
         </Combinator>
       </Expression>
-      <Expression xsi:type="imvizui:ImGuiVisualizerBuilder" />
-      <Expression xsi:type="rx:PublishSubject">
-        <Name>FormFrame</Name>
+      <Expression xsi:type="imgui:TableNextColumnBuilder">
+        <imgui:Visible>true</imgui:Visible>
       </Expression>
-      <Expression xsi:type="VisualizerMapping" />
-      <Expression xsi:type="imvizui:ImPlotVisualizerBuilder" />
-      <Expression xsi:type="rx:PublishSubject">
-        <Name>PlotFrame</Name>
+      <Expression xsi:type="imgui:ButtonBuilder">
+        <imgui:Visible>true</imgui:Visible>
+        <imgui:Text>Stop</imgui:Text>
       </Expression>
-      <Expression xsi:type="ui:VisualizerWindow">
-        <ui:Text>SlapVisualizer</ui:Text>
-        <ui:Visible>true</ui:Visible>
-        <ui:Location xsi:nil="true" />
-        <ui:Size>
-          <ui:Width>900</ui:Width>
-          <ui:Height>820</ui:Height>
-        </ui:Size>
-        <ui:WindowState xsi:nil="true" />
+      <Expression xsi:type="rx:PublishSubject">
+        <Name>StopRequested</Name>
       </Expression>
     </Nodes>
     <Edges>
-      <Edge From="0" To="5" Label="Source1" />
-      <Edge From="1" To="5" Label="Source2" />
-      <Edge From="2" To="5" Label="Source3" />
-      <Edge From="3" To="5" Label="Source4" />
-      <Edge From="4" To="5" Label="Source5" />
-      <Edge From="6" To="7" Label="Source1" />
-      <Edge From="7" To="8" Label="Source1" />
-      <Edge From="8" To="9" Label="Source1" />
-      <Edge From="9" To="10" Label="Source1" />
-      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="4" To="11" Label="Source1" />
+      <Edge From="5" To="10" Label="Source1" />
+      <Edge From="6" To="10" Label="Source2" />
+      <Edge From="7" To="10" Label="Source3" />
+      <Edge From="8" To="10" Label="Source4" />
+      <Edge From="9" To="10" Label="Source5" />
+      <Edge From="11" To="12" Label="Source1" />
+      <Edge From="12" To="13" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
