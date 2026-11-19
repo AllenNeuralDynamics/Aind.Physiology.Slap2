@@ -37,10 +37,46 @@ class DigitalStatePanel
     /// <summary>Width of the rolling window, in seconds. Can be changed from the toolbar.</summary>
     public double WindowSeconds = 10;
 
+    // Written from the source threads, read on the render thread; reference writes are atomic.
+    string pin;
+    string loggingPath;
+
     /// <summary>Latest synchronization state of the board (unknown until the first value arrives).</summary>
     public void SetSynchronized(bool value)
     {
         synchronized = value;
+    }
+
+    /// <summary>Name of the digital input pin being monitored, shown in the header.</summary>
+    public void SetPin(string value)
+    {
+        pin = value;
+    }
+
+    /// <summary>Logging location, shown in the header.</summary>
+    public void SetLoggingPath(string value)
+    {
+        loggingPath = value;
+    }
+
+    // Header above the toolbar: the monitored pin and the logging location (wrapped, paths can be long).
+    void DrawHeader()
+    {
+        ImGui.TextColored(UiTheme.TextDim, "PIN");
+        ImGui.SameLine();
+        DrawValue(pin);
+        ImGui.TextColored(UiTheme.TextDim, "LOGGING TO");
+        ImGui.SameLine();
+        ImGui.PushTextWrapPos(0f);
+        DrawValue(loggingPath);
+        ImGui.PopTextWrapPos();
+        ImGui.Separator();
+    }
+
+    static void DrawValue(string value)
+    {
+        if (string.IsNullOrEmpty(value)) ImGui.TextColored(UiTheme.Slate, "(not set)");
+        else ImGui.TextUnformatted(value);
     }
 
     public void AddSample(Bonsai.Harp.Timestamped<bool> sample)
@@ -98,6 +134,7 @@ class DigitalStatePanel
             now = latest;
         }
 
+        DrawHeader();
         DrawToolbar(now);
         if (paused) now = pausedAt;
         var window = WindowSeconds;

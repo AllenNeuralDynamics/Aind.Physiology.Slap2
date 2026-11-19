@@ -34,10 +34,25 @@ public class DigitalStateVisualizer
 
     public IObservable<Unit> Process<TTickSource, TSynchronized>(IObservable<TTickSource> frames, IObservable<Bonsai.Harp.Timestamped<bool>> samples, IObservable<TSynchronized> isSynchronized)
     {
+        return Process(frames, samples, isSynchronized, Observable.Never<string>(), Observable.Never<string>());
+    }
+
+    // Source4 = the monitored pin (any type, shown with ToString, e.g. the DIPin subject);
+    // Source5 = the logging root path. Both are shown in the panel header.
+    public IObservable<Unit> Process<TTickSource, TSynchronized, TPin>(IObservable<TTickSource> frames, IObservable<Bonsai.Harp.Timestamped<bool>> samples, IObservable<TSynchronized> isSynchronized, IObservable<TPin> pin, IObservable<string> loggingPath)
+    {
         return Observable.Create<Unit>(observer =>
         {
             var panel = new DigitalStatePanel();
             panel.WindowSeconds = WindowSeconds;
+
+            var pinSub = pin.SubscribeSafe(Observer.Create<TPin>(
+                value => panel.SetPin(Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)),
+                observer.OnError));
+
+            var pathSub = loggingPath.SubscribeSafe(Observer.Create<string>(
+                panel.SetLoggingPath,
+                observer.OnError));
 
             var samplesSub = samples.SubscribeSafe(Observer.Create<Bonsai.Harp.Timestamped<bool>>(
                 panel.AddSample,
@@ -82,7 +97,7 @@ public class DigitalStateVisualizer
                 observer.OnError,
                 observer.OnCompleted));
 
-            return new CompositeDisposable(samplesSub, syncSub, frameSub);
+            return new CompositeDisposable(pinSub, pathSub, samplesSub, syncSub, frameSub);
         });
     }
 }

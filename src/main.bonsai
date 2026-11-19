@@ -234,7 +234,7 @@
               <Combinator xsi:type="harp:CreateTimestamped" />
             </Expression>
             <Expression xsi:type="rx:PublishSubject">
-              <Name>DigitalState</Name>
+              <Name>RisingEdgeEvents</Name>
             </Expression>
           </Nodes>
           <Edges>
